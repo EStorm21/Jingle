@@ -18,6 +18,8 @@
 date_default_timezone_set('America/Los_Angeles');
 $file = fopen("8414.sleep","r");
 $sleepList = [];
+$sleepListFilt = [];
+$bridge = 0;
 if ($file) {
     	while (($line = fgets($file)) !== false) {
 		$data = explode("|", $line);
@@ -28,7 +30,42 @@ if ($file) {
 			if ($date) {
 				//echo $date . " " . $asleep  . "<br>";
 				$sleepList[$date]= $coords[1];
+				$sleepListFilt[$date] = $coords[1];
+				if ($coords[1]) {
+					$bridge = $coords[0];
+				} else {
+					if ( $coords[0] - $bridge < 3600) { //one hour
+				//echo "in";
+						$sleepListFilt[$date] = 1;
+						//echo $sleepListFilt[$date];
+						echo $sleepListFilt[$date+1];
+					}
+				}
 			}
+		}
+	}
+	$keys = [];
+	$sleepListFilt = $sleepList;
+	$count = 0;
+	$start = 0;
+	foreach($sleepList as $key => $val) {
+		if($val) {
+			foreach($keys as $i) {
+				$sleepListFilt[$i] = 1;
+			}
+			$keys = [];
+			$count = 0;
+			$start = 1;
+		} else {
+			++$count;
+			if ($start) {
+				array_push($keys, $key);
+			}
+		}
+		if ($count >= 7) {
+			$start = 0;
+			$count = 0;
+			$keys = [];
 		}
 	}
 } else {
@@ -52,8 +89,7 @@ function plotString($data)
 <script type="text/javascript">
 
 $(document).ready(function(){
-  var line1=[['2008-09-30 4:00PM',4], ['2008-10-30 4:00PM',6.5], ['2008-11-30 4:00PM',5.7], ['2008-12-30 4:00PM',9], ['2009-01-30 4:00PM',8.2]];
-  plot1 = $.jqplot('chart1', <?php echo plotString($sleepList) ?>, {
+  plot1 = $.jqplot('chart1', <?php echo plotString($sleepListFilt) ?>, {
     title:'Sleep History',
     axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer, tickOptions:{formatString:'%#m/%e %#I:%M %p'}}, 
 	 },
@@ -74,15 +110,39 @@ $(document).ready(function(){
 	}
     }
   });
+
+  plot2 = $.jqplot('chart2', <?php echo plotString($sleepList) ?>, {
+    title:'Sleep History',
+    axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer, tickOptions:{formatString:'%#m/%e %#I:%M %p'}},
+         },
+    series:[{lineWidth:4, markerOptions:{style:'square'}}],
+    cursor:{
+        show:true,
+        zoom:true,
+        showTooltip:true,
+        showTooltipOutsideZoom:true,
+        followMouse:true,
+        constrainZoomTo:'x',
+        dblClickReset:true
+    },
+    axesDefaults: {
+        tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+        tickOptions: {
+          angle:-30,
+        }
+    }
+  });
 });
-$('#button-reset').click(function() { alert('clicked'); plot1.resetZoom() });
+
+//$('#button-reset').click(function() { alert('clicked'); plot1.resetZoom() });
 
 
 
 </script>
 
 <div id="chart1"></div>
-<button value="reset" onclick="plot1.resetZoom();">Reset</button>
+<div id="chart2"></div>
+<!-- <button value="reset" onclick="plot1.resetZoom();">Reset</button> -->
 
 
 </body>

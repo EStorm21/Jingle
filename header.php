@@ -16,8 +16,9 @@
 
 
 <?php
-$projectNames = ['Jingle', 'Crash', 'Symphony', 'Prometheus', 'Artemis', 'Roger', 'Apollo', 'Darwin', 'Mercury', 'Ironwell', 'Stratos', 'Dirac'];
+$projectNames = ['Jingle', 'Symphony', 'Prometheus', 'Artemis', 'Roger', 'Apollo', 'Darwin', 'Mercury', 'Ironwell', 'Stratos', 'Dirac'];
 
-$name = $projectNames[array_rand($projectNames)];
+//$name = $projectNames[array_rand($projectNames)];
+$name = 'Jingle';
 ?>
 
