@@ -81,7 +81,59 @@ function plotString($data)
 	$string .= "]]";
 	return $string;
 }
-//echo plotString($sleepList); 
+
+$maxSleep = 0;
+$maxSleepTime = 0;
+$sleepStart = 0;
+$sleepEnd = 0;
+$maxAwake = 0;
+$maxAwakeTime = 0;
+$awakeStart = 0;
+$awakeEnd = 0;
+foreach($sleepListFilt as $key => $val) {
+	if ($val) {//if asleep
+		$sleepEnd = $key;
+		if ($sleepStart == 0) {
+			$sleepStart = $key;
+		}
+		$awakeStart = 0;
+		$awakeEnd = 0;
+	} else {
+		$awakeEnd = $key;
+		if ($awakeStart == 0) {
+			$awakeStart = $key;
+		}
+                $sleepStart = 0;
+                $sleepEnd = 0;
+        }
+
+	if ($sleepStart) {//if there is a streak running
+		$streak = strtotime($sleepEnd)- strtotime($sleepStart);
+		if ($streak > $maxSleep) {
+			$maxSleep = $streak;
+			$maxSleepTime = $sleepStart;
+		}
+	}
+	if ($awakeStart) {//if there is a streak running
+                $streakAwake = strtotime($awakeEnd)- strtotime($awakeStart);
+                if ($streakAwake > $maxAwake) {
+                        $maxAwake = $streakAwake;
+                        $maxAwakeTime = $awakeStart;
+                }
+        }
+
+}
+
+$averageSleep = array_sum($sleepListFilt)/count($sleepListFilt)*24;
+$hours = floor($averageSleep);
+echo "<p>Average sleep per night: " . $hours . " hours " . floor(($averageSleep-$hours)*60) . " minutes" . "<br>";
+
+$hours = floor($maxAwake/3600);
+echo "Your longest contiguous period awake is: " . $hours . " hours " . floor(($maxAwake-$hours*3600)/60) . " minutes starting " . $maxAwakeTime;
+
+$hours = floor($maxSleep/3600);
+echo "<br>Your longest sleep is: " . $hours . " hours " . floor(($maxSleep-$hours*3600)/60) . " minutes on " . $maxSleepTime . "</p>";
+
 ?>
 
 
@@ -112,7 +164,7 @@ $(document).ready(function(){
   });
 
   plot2 = $.jqplot('chart2', <?php echo plotString($sleepList) ?>, {
-    title:'Sleep History',
+    title:'Raw Sleep History',
     axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer, tickOptions:{formatString:'%#m/%e %#I:%M %p'}},
          },
     series:[{lineWidth:4, markerOptions:{style:'square'}}],
@@ -139,8 +191,9 @@ $(document).ready(function(){
 
 
 </script>
-
+<p>Here is a summary of  when you have been sleeping, or at least when someone has been in your bed. <?php echo $name ?> filters the raw data to provide a more accurate prediction.</p>
 <div id="chart1"></div>
+<p>This is the unfiltered data collected from <?php echo $name ?>'s sensors. Eventually this view will be discontinued, but it sure is cool to look at as a comparison, isn't it?</p>
 <div id="chart2"></div>
 <!-- <button value="reset" onclick="plot1.resetZoom();">Reset</button> -->
 

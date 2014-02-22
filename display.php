@@ -18,7 +18,7 @@
 
       <div>
         <h2>Data Summary</h2>
-        <p class="lead">Below is analysis of data collected by <?php echo $name ?>.
+        <p class="lead">This page is a compilation of data collected by  <?php echo $name ?>. To focus on specific data, use the navigation tabs up top.</p>
       </div>
       <!-- This section is used to plugin additional data visualization modules -->
 	<?php
