@@ -1,8 +1,7 @@
-<!-- Optional theme -->
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
 
-<!-- Optional theme -->
+<!-- Optional bootstrap theme -->
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
 
 <!-- Latest compiled and minified JavaScript -->
@@ -18,7 +17,16 @@
 <?php
 $projectNames = ['Jingle', 'Symphony', 'Prometheus', 'Artemis', 'Roger', 'Apollo', 'Darwin', 'Mercury', 'Ironwell', 'Stratos', 'Dirac'];
 
+include_once 'headerFunctions.php';
+
 //$name = $projectNames[array_rand($projectNames)];
 $name = 'Jingle';
+
+include_once 'navbar.php';
 ?>
+<style>
+body {
+    padding-top: 50px;
+}
+</style>
 
