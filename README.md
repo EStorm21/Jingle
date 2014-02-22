@@ -5,7 +5,7 @@ Jingle is a lightweight sensory system designed to be deployed on embedded syste
 * [Features](#Features)
 * [Installation](#Installation (Linux-based systems))
 * [Compatible Hardware](#Compatible Hardware)
-* [Modules](Modules)
+* [Modules](#Modules)
 
 ##Features
 * A lightweight web interface designed to run on an embedded system
