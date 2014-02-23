@@ -145,7 +145,8 @@ $(document).ready(function(){
     title:'Sleep History',
     axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer, tickOptions:{formatString:'%#m/%e %#I:%M %p'}}, 
 	 },
-    series:[{lineWidth:4, markerOptions:{style:'square'}}],
+    seriesColors:["#491057"],
+    series:[{lineWidth:4, markerOptions:{style:'circle',size:2}}],
     cursor:{
 	show:true,
 	zoom:true,
@@ -167,7 +168,8 @@ $(document).ready(function(){
     title:'Raw Sleep History',
     axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer, tickOptions:{formatString:'%#m/%e %#I:%M %p'}},
          },
-    series:[{lineWidth:4, markerOptions:{style:'square'}}],
+    seriesColors:["#491057"],
+    series:[{lineWidth:4, markerOptions:{style:'circle',size:2}}],
     cursor:{
         show:true,
         zoom:true,
@@ -193,7 +195,7 @@ $(document).ready(function(){
 </script>
 <p>Here is a summary of  when you have been sleeping, or at least when someone has been in your bed. <?php echo $name ?> filters the raw data to provide a more accurate prediction.</p>
 <div id="chart1"></div>
-<p>This is the unfiltered data collected from <?php echo $name ?>'s sensors. Eventually this view will be discontinued, but it sure is cool to look at as a comparison, isn't it?</p>
+<br><p>This is the unfiltered data collected from <?php echo $name ?>'s sensors. Early analysis suggests that this information will be able to be used to estimate quality of sleep. Eventually this view will be discontinued, but it sure is cool to look at as a comparison, isn't it?</p>
 <div id="chart2"></div>
 <!-- <button value="reset" onclick="plot1.resetZoom();">Reset</button> -->
 
