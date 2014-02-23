@@ -124,7 +124,12 @@ foreach($sleepListFilt as $key => $val) {
 
 }
 
-$averageSleep = array_sum($sleepListFilt)/count($sleepListFilt)*24;
+$last_key = strtotime(key( array_slice( $sleepListFilt, -1, 1, TRUE ) ));
+$first_key = strtotime(key( array_slice( $sleepListFilt, 0, 1, TRUE ) ));
+
+$days = ceil(($last_key-$first_key)/(3600*24));
+$sampleTotal = $days*24*60/10;
+$averageSleep = array_sum($sleepListFilt)/$sampleTotal*24;
 $hours = floor($averageSleep);
 echo "<p>Average sleep per night: " . $hours . " hours " . floor(($averageSleep-$hours)*60) . " minutes" . "<br>";
 
