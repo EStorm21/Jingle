@@ -83,11 +83,12 @@ function plotString($data)
 
 function chartString($data)
 {
+	global $first_key;
 	$string = "[[";
 	$date = "[";
 	foreach( $data as $key => $val) {
 		$string .=  $val . ",";
-		$date .= "'" . date('m/d/Y', $key*3600*24) . "',";
+		$date .= "'" . date('m/d/Y', ($key+1)*3600*24+$first_key) . "',";
 	}
 	$string .= "]]";
 	$date .= "]";
@@ -102,9 +103,10 @@ $maxAwakeTime = 0;
 $awakeStart = 0;
 $awakeEnd = 0;
 $dayTotal = [];
+$first_key = strtotime(key( array_slice( $sleepListFilt, 0, 1, TRUE ) ));
 
 foreach($sleepListFilt as $key => $val) {
-	$dayNumb = floor(strtotime($key)/(3600*24));
+	$dayNumb = floor((strtotime($key)-$first_key)/(3600*24));
 	if (isset($dayTotal[$dayNumb]) == false) {
 		$dayTotal[$dayNumb] = 0;
 	}
@@ -143,7 +145,6 @@ foreach($sleepListFilt as $key => $val) {
 
 }
 
-$first_key = strtotime(key( array_slice( $sleepListFilt, 0, 1, TRUE ) ));
 $last_key = strtotime(key( array_slice( $sleepListFilt, -1, 1, TRUE ) ));
 
 $days = ceil(($last_key-$first_key)/(3600*24));
