@@ -8,8 +8,9 @@
 <script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.dateAxisRenderer.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.cursor.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.canvasAxisTickRenderer.js"></script>
-
-
+<script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.barRenderer.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jqplot/1.0.8/plugins/jqplot.pointLabels.min.js"></script>
 </head>
 
 <body>
@@ -35,9 +36,7 @@ if ($file) {
 					$bridge = $coords[0];
 				} else {
 					if ( $coords[0] - $bridge < 3600) { //one hour
-				//echo "in";
 						$sleepListFilt[$date] = 1;
-						//echo $sleepListFilt[$date];
 						echo $sleepListFilt[$date+1];
 					}
 				}
@@ -82,6 +81,18 @@ function plotString($data)
 	return $string;
 }
 
+function chartString($data)
+{
+	$string = "[[";
+	$date = "[";
+	foreach( $data as $key => $val) {
+		$string .=  $val . ",";
+		$date .= "'" . date('m/d/Y', $key*3600*24) . "',";
+	}
+	$string .= "]]";
+	$date .= "]";
+	return [$string, $date]; 
+}
 $maxSleep = 0;
 $maxSleepTime = 0;
 $sleepStart = 0;
@@ -90,8 +101,17 @@ $maxAwake = 0;
 $maxAwakeTime = 0;
 $awakeStart = 0;
 $awakeEnd = 0;
+$dayTotal = [];
+
 foreach($sleepListFilt as $key => $val) {
+	$dayNumb = floor(strtotime($key)/(3600*24));
+	if (isset($dayTotal[$dayNumb]) == false) {
+		echo $dayNumb;
+		$dayTotal[$dayNumb] = 0;
+	}
 	if ($val) {//if asleep
+		$dayTotal[$dayNumb] = $dayTotal[$dayNumb] + 10/60;
+//		echo $dayNumb;
 		$sleepEnd = $key;
 		if ($sleepStart == 0) {
 			$sleepStart = $key;
@@ -124,8 +144,8 @@ foreach($sleepListFilt as $key => $val) {
 
 }
 
-$last_key = strtotime(key( array_slice( $sleepListFilt, -1, 1, TRUE ) ));
 $first_key = strtotime(key( array_slice( $sleepListFilt, 0, 1, TRUE ) ));
+$last_key = strtotime(key( array_slice( $sleepListFilt, -1, 1, TRUE ) ));
 
 $days = ceil(($last_key-$first_key)/(3600*24));
 $sampleTotal = $days*24*60/10;
@@ -138,7 +158,8 @@ echo "Your longest contiguous period awake is: " . $hours . " hours " . floor(($
 
 $hours = floor($maxSleep/3600);
 echo "<br>Your longest sleep is: " . $hours . " hours " . floor(($maxSleep-$hours*3600)/60) . " minutes on " . $maxSleepTime . "</p>";
-
+echo chartString($dayTotal);
+print_r(array_keys($dayTotal));
 ?>
 
 
@@ -146,6 +167,7 @@ echo "<br>Your longest sleep is: " . $hours . " hours " . floor(($maxSleep-$hour
 <script type="text/javascript">
 
 $(document).ready(function(){
+
   plot1 = $.jqplot('chart1', <?php echo plotString($sleepListFilt) ?>, {
     title:'Sleep History',
     axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer, tickOptions:{formatString:'%#m/%e %#I:%M %p'}}, 
@@ -191,6 +213,31 @@ $(document).ready(function(){
         }
     }
   });
+
+    plot4 = $.jqplot('chart3', <?php $chart =  chartString($dayTotal); echo $chart[0] ?>, {
+        title:'Hours Asleep',
+	seriesDefaults:{
+            renderer:$.jqplot.BarRenderer,
+            rendererOptions: {fillToZero: true}
+        },
+	seriesColors:["#491057"],
+        axes: {
+            // Use a category axis on the x axis and use our custom ticks.
+            xaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer,
+                ticks: <?php echo $chart[1] ?>
+            }, 
+	    yaxis: {
+	        yaxis:0
+	    }
+        }
+    });
+
+
+
+
+
+
 });
 
 //$('#button-reset').click(function() { alert('clicked'); plot1.resetZoom() });
@@ -200,6 +247,7 @@ $(document).ready(function(){
 </script>
 <p>Here is a summary of  when you have been sleeping, or at least when someone has been in your bed. <?php echo $name ?> filters the raw data to provide a more accurate prediction.</p>
 <div id="chart1"></div>
+<div id="chart3"></div>
 <br><p>This is the unfiltered data collected from <?php echo $name ?>'s sensors. Early analysis suggests that this information will be able to be used to estimate quality of sleep. Eventually this view will be discontinued, but it sure is cool to look at as a comparison, isn't it?</p>
 <div id="chart2"></div>
 <!-- <button value="reset" onclick="plot1.resetZoom();">Reset</button> -->
