@@ -106,7 +106,6 @@ $dayTotal = [];
 foreach($sleepListFilt as $key => $val) {
 	$dayNumb = floor(strtotime($key)/(3600*24));
 	if (isset($dayTotal[$dayNumb]) == false) {
-		echo $dayNumb;
 		$dayTotal[$dayNumb] = 0;
 	}
 	if ($val) {//if asleep
@@ -158,8 +157,6 @@ echo "Your longest contiguous period awake is: " . $hours . " hours " . floor(($
 
 $hours = floor($maxSleep/3600);
 echo "<br>Your longest sleep is: " . $hours . " hours " . floor(($maxSleep-$hours*3600)/60) . " minutes on " . $maxSleepTime . "</p>";
-echo chartString($dayTotal);
-print_r(array_keys($dayTotal));
 ?>
 
 
