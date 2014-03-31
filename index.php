@@ -9,7 +9,9 @@ foreach ($_GET as $key => $value) {
 	//echo $key . ' => ' . $value;
 	if ($key == 'id') {
 	} else if ($key == 'query') {
-		$OUT->pushELement('queryResponse', parseQuery($_GET['id'], $value));
+		$OUT->pushElement('queryResponse', parseQuery($_GET['id'], $value));
+	} else if ($key == 'action') {
+		$OUT->pushElement('actionResponse', parseQuery($_GET['id'], $value));
 	} else {
 		logValue($_GET['id'], $key, $value);
 	}
